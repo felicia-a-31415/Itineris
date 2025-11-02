@@ -6,7 +6,7 @@ export default function TableauDeBord() {
     <main>
       <header className="db-header">
         <div>
-          <h1>Bonsoir, Felicia 👋</h1>
+          <h1>Bonjour 👋</h1>
           <p className="muted">Prêt à continuer ton voyage d’apprentissage ?</p>
         </div>
         <Link to="/parametres" aria-label="Paramètres" className="settings-btn">⚙︎</Link>
@@ -27,7 +27,7 @@ export default function TableauDeBord() {
           subtitle="Sessions Pomodoro"
         />
         <Tile
-          to="/stats"
+          to="/statistiques"
           icon={<span className="emoji">📊</span>}
           title="Statistiques"
           subtitle="Suivez vos progrès"
@@ -39,7 +39,7 @@ export default function TableauDeBord() {
           subtitle="Astuces d’étude"
         />
         <Tile
-          to="/notes"
+          to="/notesrapides"
           icon={<span className="emoji">🗒️</span>}
           title="Notes rapides"
           subtitle="Idées et rappels"

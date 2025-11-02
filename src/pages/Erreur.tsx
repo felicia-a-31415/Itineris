@@ -5,7 +5,7 @@ export default function Erreur() {
     <main>
       <h1>404 - Page non trouvée</h1>
       <p>Oups! Cette page n’existe pas.</p>
-      <Link to="/">Retour à l’accueil</Link>
+      <Link to="/tableaudebord">Retour au tableau de bord</Link>
     </main>
   )
 }
