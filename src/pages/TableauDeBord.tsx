@@ -76,7 +76,7 @@ export function TableauDeBord({ onNavigate, userName = 'étudiant' }: TableauDeB
             <p className="text-[#8B8680]">Prêt à continuer ton voyage d'apprentissage ?</p>
           </div>
           <Button
-            onClick={() => onNavigate('settings')}
+            onClick={() => onNavigate('parametres')}
             variant="ghost"
             className="text-[#8B8680] hover:text-[#2C2C2C] hover:bg-white rounded-xl"
           >
