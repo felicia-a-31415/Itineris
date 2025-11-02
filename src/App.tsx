@@ -1,6 +1,6 @@
 import './styles/globals.css'
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom'
 
 import { Bienvenue } from './pages/Bienvenue'
@@ -15,48 +15,45 @@ import NotesRapides from './pages/NotesRapides'
 import Assistant from './pages/Assistant'
 import Erreur from './pages/Erreur'
 
-interface UserData {
-  name: string;
-  year: string;
-  favoriteSubjects: string[];
-  strongSubjects: string[];
-  weakSubjects: string[];
-  lifeGoals: string;
-}
+import { loadUserData, saveUserData, type UserData } from './lib/storage'
 
 export default function App() {
   const [userData, setUserData] = useState<UserData | null>(null)
-
   const navigate = useNavigate()
 
+  // 1) Charger les données si elles existent
+  useEffect(() => {
+    const existing = loadUserData()
+    if (existing) setUserData(existing)
+  }, [])
+
+  // 2) Quand l’onboarding est terminé: sauver + rediriger
   const handleOnboardingComplete = (data: UserData) => {
-    setUserData(data);
+    setUserData(data)
+    saveUserData(data)
     navigate('/tableaudebord')
-  };
+  }
 
   return (
     <div className="min-h-screen bg-[#F5F1E8] text-[#2C2C2C]">
-      {/* Routes define the different pages */}
       <Routes>
-
-        {/* Welcome Screen Route */}
         <Route
           path="/"
           element={<Bienvenue onGetStarted={() => navigate('/onboarding')} />}
         />
-
-        {/* Onboarding Screen Route */}
-        <Route 
-          path="/onboarding" 
-          element={<Onboarding onComplete={handleOnboardingComplete}/>} 
+        <Route
+          path="/onboarding"
+          element={<Onboarding onComplete={handleOnboardingComplete} />}
         />
-
-        {/* Dashboard Screen Route */}
-        <Route 
+        <Route
           path="/tableaudebord"
-          element={<TableauDeBord onNavigate={(screen) => navigate(`/${screen}`)} userName={userData?.name} />} 
+          element={
+            <TableauDeBord
+              onNavigate={(screen) => navigate(`/${screen}`)}
+              userName={userData?.name}
+            />
+          }
         />
-
         <Route path="/parametres" element={<Parametres />} />
         <Route path="/todo" element={<Todo />} />
         <Route path="/minuteur" element={<Minuteur />} />
