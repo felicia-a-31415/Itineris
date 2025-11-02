@@ -1,78 +1,295 @@
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState } from 'react';
+import { Compass, ArrowRight, Check } from 'lucide-react';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Textarea } from '../ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Label } from '../ui/label';
+import { Badge } from '../ui/badge';
 
-const MATIERES = [
-  "Math", "Physique", "Chimie", "Biologie",
-  "Français", "Anglais", "Histoire", "Géo",
-  "Informatique", "Philo", "Éco"
-];
+interface OnboardingData {
+  name: string;
+  year: string;
+  favoriteSubjects: string[];
+  strongSubjects: string[];
+  weakSubjects: string[];
+  lifeGoals: string;
+}
 
-export default function Onboarding(){
-  const nav = useNavigate();
-  const [name,setName] = useState("");
-  const [year,setYear] = useState("");
-  const [fav,setFav] = useState<string[]>([]);
-  const [strong,setStrong] = useState<string[]>([]);
-  const [weak,setWeak] = useState<string[]>([]);
-  const [goals,setGoals] = useState("");
+interface OnboardingProps {
+  onComplete: (data: OnboardingData) => void;
+}
 
-  const toggle = (arr:string[], set:(v:string[])=>void, item:string) =>
-    set(arr.includes(item) ? arr.filter(x=>x!==item) : [...arr,item]);
+export function Onboarding({ onComplete }: OnboardingProps) {
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState<OnboardingData>({
+    name: '',
+    year: '',
+    favoriteSubjects: [],
+    strongSubjects: [],
+    weakSubjects: [],
+    lifeGoals: '',
+  });
 
-  const save = (e:React.FormEvent)=>{
-    e.preventDefault();
-    const user = { name, year, favoriteSubjects:fav, strongSubjects:strong, weakSubjects:weak, lifeGoals:goals };
-    localStorage.setItem("itinerisUser", JSON.stringify(user));
-    nav("/dashboard");
+  const subjects = [
+    'Mathématiques',
+    'Français',
+    'Anglais',
+    'Histoire',
+    'Géographie',
+    'Sciences',
+    'Physique',
+    'Chimie',
+    'Monde contemporain',
+    'Arts',
+    'Éducation financière',
+    'Éducation physique',
+    'Culture et société',
+    'Histoire du XXe siècle',
+    'Autre',
+  ];
+
+  const years = [
+    'Secondaire 1',
+    'Secondaire 2',
+    'Secondaire 3',
+    'Secondaire 4',
+    'Secondaire 5',
+  ];
+
+  const toggleSubject = (category: 'favoriteSubjects' | 'strongSubjects' | 'weakSubjects', subject: string) => {
+    const currentSubjects = formData[category];
+    if (currentSubjects.includes(subject)) {
+      setFormData({
+        ...formData,
+        [category]: currentSubjects.filter((s) => s !== subject),
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [category]: [...currentSubjects, subject],
+      });
+    }
   };
 
-  const CheckList = ({label, arr, set}:{label:string, arr:string[], set:(v:string[])=>void})=>(
-    <div>
-      <div className="font-medium mb-2">{label}</div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-        {MATIERES.map(m=>(
-          <label key={m} className="flex items-center gap-2">
-            <input type="checkbox" checked={arr.includes(m)} onChange={()=>toggle(arr,set,m)} />
-            <span>{m}</span>
-          </label>
-        ))}
-      </div>
-    </div>
-  );
+  const handleNext = () => {
+    if (step < 3) {
+      setStep(step + 1);
+    } else {
+      onComplete(formData);
+    }
+  };
+
+  const canProceed = () => {
+    if (step === 1) {
+      return formData.name.trim() !== '' && formData.year !== '';
+    }
+    if (step === 2) {
+      return formData.favoriteSubjects.length > 0 && formData.strongSubjects.length > 0 && formData.weakSubjects.length > 0;
+    }
+    if (step === 3) {
+      return formData.lifeGoals.trim() !== '';
+    }
+    return false;
+  };
 
   return (
-    <main className="container-page">
-      <form onSubmit={save} className="tile space-y-5">
-        <h2 className="text-xl font-semibold">Personnalisation</h2>
-
-        <div className="grid sm:grid-cols-2 gap-4">
-          <label className="block">
-            <span className="block mb-1">Ton nom</span>
-            <input className="w-full border border-border rounded-itn px-3 py-2 bg-white/70"
-                   value={name} onChange={e=>setName(e.target.value)} required />
-          </label>
-          <label className="block">
-            <span className="block mb-1">Année (ex. Sec 5)</span>
-            <input className="w-full border border-border rounded-itn px-3 py-2 bg-white/70"
-                   value={year} onChange={e=>setYear(e.target.value)} required />
-          </label>
+    <div className="min-h-screen bg-[#F5F1E8] p-4 md:p-8 flex items-center justify-center">
+      <div className="max-w-2xl w-full">
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 rounded-full bg-[#4169E1] mx-auto mb-4 flex items-center justify-center">
+            <Compass className="w-8 h-8 text-white" />
+          </div>
+          <h1 className="text-3xl text-[#2C2C2C] mb-2">Bienvenue sur Itineris</h1>
+          <p className="text-[#8B8680]">Personnalisons votre expérience d'apprentissage</p>
         </div>
 
-        <CheckList label="Matières préférées" arr={fav} set={setFav}/>
-        <CheckList label="Matières fortes" arr={strong} set={setStrong}/>
-        <CheckList label="Matières à travailler" arr={weak} set={setWeak}/>
-
-        <label className="block">
-          <span className="block mb-1">Tes objectifs de vie</span>
-          <textarea className="w-full border border-border rounded-itn px-3 py-2 bg-white/70"
-                    rows={4} value={goals} onChange={e=>setGoals(e.target.value)} />
-        </label>
-
-        <div className="flex gap-3">
-          <button type="submit" className="btn">Enregistrer</button>
-          <button type="button" className="btn-ghost" onClick={()=>nav("/")}>Annuler</button>
+        {/* Progress Indicator */}
+        <div className="flex justify-center gap-2 mb-8">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className={`h-2 rounded-full transition-all ${
+                i === step ? 'w-12 bg-[#4169E1]' : 'w-2 bg-[#8B8680]/30'
+              }`}
+            />
+          ))}
         </div>
-      </form>
-    </main>
+
+        {/* Form Card */}
+        <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm">
+          {step === 1 && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl text-[#2C2C2C] mb-2">Faisons connaissance</h2>
+                <p className="text-[#8B8680] text-sm">Commençons par les bases</p>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="name" className="text-[#2C2C2C] mb-2">
+                    Comment t'appelles-tu ?
+                  </Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Ton prénom..."
+                    className="mt-2 border-[#F5F1E8] rounded-xl"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="year" className="text-[#2C2C2C] mb-2">
+                    Tu es en quelle année ?
+                  </Label>
+                  <Select value={formData.year} onValueChange={(value) => setFormData({ ...formData, year: value })}>
+                    <SelectTrigger className="mt-2 border-[#F5F1E8] rounded-xl">
+                      <SelectValue placeholder="Sélectionne ton niveau..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {years.map((year) => (
+                        <SelectItem key={year} value={year}>
+                          {year}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl text-[#2C2C2C] mb-2">Tes matières</h2>
+                <p className="text-[#8B8680] text-sm">Sélectionne toutes celles qui s'appliquent</p>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <Label className="text-[#2C2C2C] mb-3 block">
+                    Quelles sont tes matières préférées ?
+                  </Label>
+                  <div className="flex flex-wrap gap-2">
+                    {subjects.map((subject) => (
+                      <Badge
+                        key={subject}
+                        onClick={() => toggleSubject('favoriteSubjects', subject)}
+                        className={`cursor-pointer rounded-lg px-3 py-2 transition-all ${
+                          formData.favoriteSubjects.includes(subject)
+                            ? 'bg-[#4169E1] text-white hover:bg-[#3557C1]'
+                            : 'bg-white text-[#2C2C2C] border border-[#F5F1E8] hover:border-[#4169E1]'
+                        }`}
+                      >
+                        {formData.favoriteSubjects.includes(subject) && (
+                          <Check className="w-3 h-3 mr-1 inline" />
+                        )}
+                        {subject}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-[#2C2C2C] mb-3 block">
+                    Dans quelles matières es-tu fort(e) ?
+                  </Label>
+                  <div className="flex flex-wrap gap-2">
+                    {subjects.map((subject) => (
+                      <Badge
+                        key={subject}
+                        onClick={() => toggleSubject('strongSubjects', subject)}
+                        className={`cursor-pointer rounded-lg px-3 py-2 transition-all ${
+                          formData.strongSubjects.includes(subject)
+                            ? 'bg-[#6B9AC4] text-white hover:bg-[#5A89B3]'
+                            : 'bg-white text-[#2C2C2C] border border-[#F5F1E8] hover:border-[#6B9AC4]'
+                        }`}
+                      >
+                        {formData.strongSubjects.includes(subject) && (
+                          <Check className="w-3 h-3 mr-1 inline" />
+                        )}
+                        {subject}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-[#2C2C2C] mb-3 block">
+                    Quelles matières aimerais-tu améliorer ?
+                  </Label>
+                  <div className="flex flex-wrap gap-2">
+                    {subjects.map((subject) => (
+                      <Badge
+                        key={subject}
+                        onClick={() => toggleSubject('weakSubjects', subject)}
+                        className={`cursor-pointer rounded-lg px-3 py-2 transition-all ${
+                          formData.weakSubjects.includes(subject)
+                            ? 'bg-[#8B8680] text-white hover:bg-[#7A756F]'
+                            : 'bg-white text-[#2C2C2C] border border-[#F5F1E8] hover:border-[#8B8680]'
+                        }`}
+                      >
+                        {formData.weakSubjects.includes(subject) && (
+                          <Check className="w-3 h-3 mr-1 inline" />
+                        )}
+                        {subject}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl text-[#2C2C2C] mb-2">Tes objectifs</h2>
+                <p className="text-[#8B8680] text-sm">Qu'est-ce qui te motive ?</p>
+              </div>
+
+              <div>
+                <Label htmlFor="goals" className="text-[#2C2C2C] mb-2">
+                  Quels sont tes objectifs dans la vie ?
+                </Label>
+                <Textarea
+                  id="goals"
+                  value={formData.lifeGoals}
+                  onChange={(e) => setFormData({ ...formData, lifeGoals: e.target.value })}
+                  placeholder="Partage tes rêves et aspirations... (ex: devenir médecin, créer mon entreprise, voyager autour du monde...)"
+                  className="mt-2 border-[#F5F1E8] rounded-xl min-h-[150px]"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Navigation */}
+          <div className="flex justify-between mt-8 pt-8 border-t border-[#F5F1E8]">
+            {step > 1 ? (
+              <Button
+                onClick={() => setStep(step - 1)}
+                variant="outline"
+                className="rounded-xl border-[#8B8680]/20"
+              >
+                Retour
+              </Button>
+            ) : (
+              <div />
+            )}
+            <Button
+              onClick={handleNext}
+              disabled={!canProceed()}
+              className="bg-[#4169E1] hover:bg-[#3557C1] text-white rounded-xl disabled:opacity-50"
+            >
+              {step === 3 ? 'Commencer' : 'Suivant'}
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
