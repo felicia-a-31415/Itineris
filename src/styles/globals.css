@@ -1,22 +1,90 @@
+/* ---- Itineris base tokens (no Tailwind required) ---- */
+:root {
+  --font-size: 16px;
+
+  /* colors (light) */
+  --bg: #f5f1e8;           /* page background */
+  --fg: #2c2c2c;           /* main text */
+  --muted: #717182;        /* secondary text */
+  --primary: #4169e1;      /* links & accents */
+  --card: #ffffff;         /* surfaces/cards/nav */
+  --border: rgba(0,0,0,0.10);
+
+  /* components */
+  --input-bg: #f3f3f5;
+  --ring: rgba(0,0,0,0.08);
+
+  /* radii */
+  --radius: 10px;
+}
+
+.dark {
+  /* colors (dark) */
+  --bg: #121212;
+  --fg: #f2f2f2;
+  --muted: #a0a0a0;
+  --primary: #9bb4ff;
+  --card: #1b1b1b;
+  --border: rgba(255,255,255,0.12);
+
+  --input-bg: #1f1f1f;
+  --ring: rgba(255,255,255,0.12);
+}
+
+/* ---- Resets & layout ---- */
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+html { font-size: var(--font-size); }
 body {
-  font-family: system-ui, sans-serif;
-  background: #f5f1e8;
-  color: #2c2c2c;
   margin: 0;
-  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-main {
-  max-width: 700px;
-  margin: 60px auto;
-  padding: 20px;
+main { max-width: 960px; margin: 56px auto; padding: 0 20px; }
+
+/* ---- Typography ---- */
+h1, h2, h3, h4 { margin: 0 0 .5rem; line-height: 1.35; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.25rem; }
+p  { margin: 0 0 .75rem; color: var(--fg); }
+small, .muted { color: var(--muted); }
+
+a { color: var(--primary); text-decoration: underline; text-underline-offset: 2px; }
+
+/* ---- Simple components ---- */
+.nav {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 20px;
 }
 
-h1 {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
 
-p {
-  color: #666;
+.btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  background: var(--primary); color: white;
+  border: 0; border-radius: calc(var(--radius) - 4px);
+  padding: .5rem .9rem; cursor: pointer;
+}
+.btn.ghost { background: transparent; color: var(--fg); border: 1px solid var(--border); }
+.btn:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+
+input, textarea {
+  width: 100%; color: var(--fg);
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 4px);
+  padding: .55rem .7rem;
 }
