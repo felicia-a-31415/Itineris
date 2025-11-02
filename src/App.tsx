@@ -28,7 +28,7 @@ export default function App() {
         <Route path="/minuteur" element={<Minuteur />} />
         <Route path="/statistiques" element={<Statistiques />} />
         <Route path="/conseils" element={<Conseils />} />
-        <Route path="/notes-rapides" element={<NotesRapides />} />
+        <Route path="/notesrapides" element={<NotesRapides />} />
         <Route path="/assistant" element={<Assistant />} />
         <Route path="/*" element={<Erreur />} />
       </Routes>
