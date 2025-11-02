@@ -1,11 +1,11 @@
 import { BookOpen, Compass } from 'lucide-react';
 import { Button } from '../ui/button';
 
-interface HomeScreenProps {
+interface BienvenueProps {
   onGetStarted: () => void;
 }
 
-export function HomeScreen({ onGetStarted }: HomeScreenProps) {
+export default function Bienvenue({ onGetStarted }: BienvenueProps) {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-[#F5F1E8]">
       <div className="flex flex-col items-center max-w-md text-center space-y-8">

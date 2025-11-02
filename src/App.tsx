@@ -1,6 +1,6 @@
 import './styles/globals.css'
 
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useNavigate } from 'react-router-dom'
 import Bienvenue from './pages/Bienvenue'
 import Onboarding from './pages/Onboarding'
 import TableauDeBord from './pages/TableauDeBord'
@@ -14,11 +14,17 @@ import Assistant from './pages/Assistant'
 import Erreur from './pages/Erreur'
 
 export default function App() {
+  const navigate = useNavigate()
+
+
   return (
     <div className="min-h-screen bg-[#F5F1E8] text-[#2C2C2C]">
       {/* Routes define the different pages */}
       <Routes>
-        <Route path="/" element={<Bienvenue />} />
+        <Route
+          path="/"
+          element={<Bienvenue onGetStarted={() => navigate('/onboarding')} />}
+        />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/tableaudebord" element={<TableauDeBord />} />
         <Route path="/parametres" element={<Parametres />} />
