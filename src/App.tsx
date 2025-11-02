@@ -1,10 +1,29 @@
 import './styles/globals.css'
+import { Routes, Route } from 'react-router-dom'
+import Bienvenue from './pages/Bienvenue'
+import TableauDeBord from './pages/TableauDeBord'
+import Parametres from './pages/Parametres'
+import Todo from './pages/Todo'
+import Minuteur from './pages/Minuteur'
+import Statistiques from './pages/Statistiques'
+import Conseils from './pages/Conseils'
+import NotesRapides from './pages/NotesRapides'
+import Assistant from './pages/Assistant'
 
-function App() {
+export default function App() {
   return (
-    <main>
-    </main>
+    <div className="min-h-screen bg-[#F5F1E8]">
+      <Routes>
+        <Route path="/" element={<Bienvenue />} />
+        <Route path="/tableaudebord" element={<TableauDeBord />} />
+        <Route path="/parametres" element={<Parametres />} />
+        <Route path="/todo" element={<Todo />} />
+        <Route path="/minuteur" element={<Minuteur />} />
+        <Route path="/statistiques" element={<Statistiques />} />
+        <Route path="/conseils" element={<Conseils />} />
+        <Route path="/notes-rapides" element={<NotesRapides />} />
+        <Route path="/assistant" element={<Assistant />} />
+      </Routes>
+    </div>
   )
 }
-
-export default App
