@@ -6,7 +6,7 @@ import { Routes, Route, useNavigate } from 'react-router-dom'
 import { Bienvenue } from './pages/Bienvenue'
 import { Onboarding } from './pages/Onboarding'
 import { TableauDeBord } from './pages/TableauDeBord'
-import Parametres from './pages/Parametres'
+import { Parametres } from './pages/Parametres'
 import Todo from './pages/Todo'
 import Minuteur from './pages/Minuteur'
 import Statistiques from './pages/Statistiques'
@@ -17,9 +17,20 @@ import Erreur from './pages/Erreur'
 
 import { loadUserData, saveUserData, type UserData } from './lib/storage'
 
+const STORAGE_KEY = 'itineris_user_data';
+
 export default function App() {
   const [userData, setUserData] = useState<UserData | null>(null)
   const navigate = useNavigate()
+
+  const defaultUserData: UserData = {
+    name: '',
+    year: 'Secondaire 1',
+    favoriteSubjects: [],
+    strongSubjects: [],
+    weakSubjects: [],
+    lifeGoals: '',
+  }
 
   // 1) Charger les données si elles existent
   useEffect(() => {
@@ -31,6 +42,7 @@ export default function App() {
   const handleOnboardingComplete = (data: UserData) => {
     setUserData(data)
     saveUserData(data)
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     navigate('/tableaudebord')
   }
 
@@ -54,7 +66,14 @@ export default function App() {
             />
           }
         />
-        <Route path="/parametres" element={<Parametres />} />
+        <Route 
+          path="/parametres" 
+          element={
+            <Parametres
+              onBack={() => navigate('/tableaudebord')}
+              userData={userData ?? defaultUserData}
+              onSave={handleOnboardingComplete}
+           />} />
         <Route path="/todo" element={<Todo />} />
         <Route path="/minuteur" element={<Minuteur />} />
         <Route path="/statistiques" element={<Statistiques />} />

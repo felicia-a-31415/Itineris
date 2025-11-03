@@ -1,45 +1,276 @@
-import { useEffect, useState } from "react";
+import { useState } from 'react';
+import { ArrowLeft, User, Palette, BookOpen, Save, Check } from 'lucide-react';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Card } from '../ui/card';
+import { Badge } from '../ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 
-export default function Parametres(){
-  const [name,setName] = useState("");
-  const [theme,setTheme] = useState<"light"|"dark">("light");
+interface UserData {
+  name: string;
+  year: string;
+  favoriteSubjects: string[];
+  strongSubjects: string[];
+  weakSubjects: string[];
+  lifeGoals: string;
+}
 
-  useEffect(()=>{
-    const raw = localStorage.getItem("itinerisUser");
-    if(raw){
-      const u = JSON.parse(raw);
-      setName(u.name ?? "");
+interface ParametresScreenProps {
+  onBack: () => void;
+  userData: UserData;
+  onSave: (data: UserData) => void;
+}
+
+export function Parametres({ onBack, userData, onSave }: ParametresScreenProps) {
+  const [formData, setFormData] = useState<UserData>(userData);
+  const [saved, setSaved] = useState(false);
+
+  const subjects = [
+    'Mathématiques',
+    'Français',
+    'Anglais',
+    'Histoire',
+    'Géographie',
+    'Sciences',
+    'Physique',
+    'Chimie',
+    'Biologie',
+    'Informatique',
+    'Philosophie',
+    'Économie',
+    'Arts',
+    'Musique',
+    'Sport',
+    'Autre',
+  ];
+
+  const years = [
+    'Secondaire 1',
+    'Secondaire 2',
+    'Secondaire 3',
+    'Secondaire 4',
+    'Secondaire 5',
+    'CEGEP 1',
+    'CEGEP 2',
+  ];
+
+  const toggleSubject = (category: 'favoriteSubjects' | 'strongSubjects' | 'weakSubjects', subject: string) => {
+    const currentSubjects = formData[category];
+    if (currentSubjects.includes(subject)) {
+      setFormData({
+        ...formData,
+        [category]: currentSubjects.filter((s) => s !== subject),
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [category]: [...currentSubjects, subject],
+      });
     }
-    document.documentElement.classList.toggle("dark", theme==="dark");
-  },[theme]);
+  };
 
-  const save = ()=>{
-    const raw = localStorage.getItem("itinerisUser");
-    const u = raw ? JSON.parse(raw) : {};
-    u.name = name;
-    localStorage.setItem("itinerisUser", JSON.stringify(u));
-    alert("Enregistré.");
+  const handleSave = () => {
+    onSave(formData);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
   };
 
   return (
-    <main className="container-page">
-      <h1 className="text-2xl font-semibold mb-4">Paramètres</h1>
-
-      <div className="tile space-y-4">
-        <label className="block">
-          <span className="block mb-1">Nom affiché</span>
-          <input className="w-full border border-border rounded-itn px-3 py-2 bg-white/70"
-                 value={name} onChange={e=>setName(e.target.value)} />
-        </label>
-
-        <div className="flex items-center gap-3">
-          <span>Thème</span>
-          <button className="btn-ghost" onClick={()=>setTheme("light")}>Clair</button>
-          <button className="btn-ghost" onClick={()=>setTheme("dark")}>Sombre</button>
+    <div className="min-h-screen bg-[#F5F1E8] p-4 md:p-8">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8 md:mb-12">
+          <div className="flex items-center">
+            <Button
+              onClick={onBack}
+              variant="ghost"
+              className="mr-4 text-[#8B8680] hover:text-[#2C2C2C] hover:bg-white/50"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <div>
+              <h1 className="text-[#2C2C2C]">Paramètres</h1>
+              <p className="text-[#8B8680] text-sm">Personnalise ton expérience</p>
+            </div>
+          </div>
+          <Button
+            onClick={handleSave}
+            className="bg-[#4169E1] hover:bg-[#3557C1] text-white rounded-xl"
+          >
+            {saved ? (
+              <>
+                <Check className="w-4 h-4 mr-2" />
+                Sauvegardé
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4 mr-2" />
+                Sauvegarder
+              </>
+            )}
+          </Button>
         </div>
 
-        <button className="btn" onClick={save}>Sauvegarder</button>
+        <Tabs defaultValue="profile" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 mb-6 bg-white/50 rounded-2xl p-1">
+            <TabsTrigger value="profile" className="rounded-xl data-[state=active]:bg-white">
+              <User className="w-4 h-4 mr-2" />
+              Profil
+            </TabsTrigger>
+            <TabsTrigger value="subjects" className="rounded-xl data-[state=active]:bg-white">
+              <BookOpen className="w-4 h-4 mr-2" />
+              Matières
+            </TabsTrigger>
+            <TabsTrigger value="theme" className="rounded-xl data-[state=active]:bg-white">
+              <Palette className="w-4 h-4 mr-2" />
+              Thème
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Profile Tab */}
+          <TabsContent value="profile">
+            <Card className="bg-white rounded-2xl p-8 shadow-sm border-0">
+              <div className="space-y-6">
+                <div>
+                  <Label htmlFor="name" className="text-[#2C2C2C] mb-2">
+                    Nom
+                  </Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="mt-2 border-[#F5F1E8] rounded-xl"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="year" className="text-[#2C2C2C] mb-2">
+                    Année scolaire
+                  </Label>
+                  <select
+                    id="year"
+                    value={formData.year}
+                    onChange={(e) => setFormData({ ...formData, year: e.target.value })}
+                    className="mt-2 w-full border border-[#F5F1E8] rounded-xl p-2 bg-white"
+                  >
+                    {years.map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <Label htmlFor="goals" className="text-[#2C2C2C] mb-2">
+                    Objectifs de vie
+                  </Label>
+                  <textarea
+                    id="goals"
+                    value={formData.lifeGoals}
+                    onChange={(e) => setFormData({ ...formData, lifeGoals: e.target.value })}
+                    className="mt-2 w-full border border-[#F5F1E8] rounded-xl p-3 min-h-[120px]"
+                  />
+                </div>
+              </div>
+            </Card>
+          </TabsContent>
+
+          {/* Subjects Tab */}
+          <TabsContent value="subjects">
+            <Card className="bg-white rounded-2xl p-8 shadow-sm border-0">
+              <div className="space-y-6">
+                <div>
+                  <Label className="text-[#2C2C2C] mb-3 block">
+                    Matières préférées
+                  </Label>
+                  <div className="flex flex-wrap gap-2">
+                    {subjects.map((subject) => (
+                      <Badge
+                        key={subject}
+                        onClick={() => toggleSubject('favoriteSubjects', subject)}
+                        className={`cursor-pointer rounded-lg px-3 py-2 transition-all ${
+                          formData.favoriteSubjects.includes(subject)
+                            ? 'bg-[#4169E1] text-white hover:bg-[#3557C1]'
+                            : 'bg-white text-[#2C2C2C] border border-[#F5F1E8] hover:border-[#4169E1]'
+                        }`}
+                      >
+                        {formData.favoriteSubjects.includes(subject) && (
+                          <Check className="w-3 h-3 mr-1 inline" />
+                        )}
+                        {subject}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-[#2C2C2C] mb-3 block">
+                    Matières fortes
+                  </Label>
+                  <div className="flex flex-wrap gap-2">
+                    {subjects.map((subject) => (
+                      <Badge
+                        key={subject}
+                        onClick={() => toggleSubject('strongSubjects', subject)}
+                        className={`cursor-pointer rounded-lg px-3 py-2 transition-all ${
+                          formData.strongSubjects.includes(subject)
+                            ? 'bg-[#6B9AC4] text-white hover:bg-[#5A89B3]'
+                            : 'bg-white text-[#2C2C2C] border border-[#F5F1E8] hover:border-[#6B9AC4]'
+                        }`}
+                      >
+                        {formData.strongSubjects.includes(subject) && (
+                          <Check className="w-3 h-3 mr-1 inline" />
+                        )}
+                        {subject}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-[#2C2C2C] mb-3 block">
+                    Matières à améliorer
+                  </Label>
+                  <div className="flex flex-wrap gap-2">
+                    {subjects.map((subject) => (
+                      <Badge
+                        key={subject}
+                        onClick={() => toggleSubject('weakSubjects', subject)}
+                        className={`cursor-pointer rounded-lg px-3 py-2 transition-all ${
+                          formData.weakSubjects.includes(subject)
+                            ? 'bg-[#8B8680] text-white hover:bg-[#7A756F]'
+                            : 'bg-white text-[#2C2C2C] border border-[#F5F1E8] hover:border-[#8B8680]'
+                        }`}
+                      >
+                        {formData.weakSubjects.includes(subject) && (
+                          <Check className="w-3 h-3 mr-1 inline" />
+                        )}
+                        {subject}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </TabsContent>
+
+          {/* Theme Tab */}
+          <TabsContent value="theme">
+            <Card className="bg-white rounded-2xl p-8 shadow-sm border-0">
+              <div className="text-center py-12">
+                <Palette className="w-12 h-12 text-[#8B8680] mx-auto mb-4" />
+                <h3 className="text-xl text-[#2C2C2C] mb-2">Personnalisation du thème</h3>
+                <p className="text-[#8B8680]">
+                  Les options de thème seront bientôt disponibles ! Tu pourras choisir parmi
+                  différents palettes de couleurs et modes d'affichage.
+                </p>
+              </div>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
-    </main>
+    </div>
   );
 }
