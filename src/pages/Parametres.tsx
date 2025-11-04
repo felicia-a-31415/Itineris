@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { ArrowLeft, User, Palette, BookOpen, Save, Check } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -6,6 +6,8 @@ import { Label } from '../ui/label';
 import { Card } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Textarea } from '../ui/textarea';
 
 interface UserData {
   name: string;
@@ -25,10 +27,6 @@ interface ParametresScreenProps {
 export function Parametres({ onBack, userData, onSave }: ParametresScreenProps) {
   const [formData, setFormData] = useState<UserData>(userData);
   const [saved, setSaved] = useState(false);
-
-  useEffect(() => {
-    setFormData(userData);
-  }, [userData]);
 
   const getSubjectsForYear = (year: string): string[] => {
     // Sec 1-2
@@ -89,8 +87,6 @@ export function Parametres({ onBack, userData, onSave }: ParametresScreenProps) 
     'Secondaire 3',
     'Secondaire 4',
     'Secondaire 5',
-    'CEGEP 1',
-    'CEGEP 2',
   ];
 
   const toggleSubject = (category: 'favoriteSubjects' | 'strongSubjects' | 'weakSubjects', subject: string) => {
@@ -172,43 +168,48 @@ export function Parametres({ onBack, userData, onSave }: ParametresScreenProps) 
               <div className="space-y-6">
                 <div>
                   <Label htmlFor="name" className="text-[#2C2C2C] mb-2">
-                    Nom
+                    Comment t'appelles-tu ?
                   </Label>
                   <Input
                     id="name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Ton prénom..."
                     className="mt-2 border-[#F5F1E8] rounded-xl"
                   />
                 </div>
 
                 <div>
                   <Label htmlFor="year" className="text-[#2C2C2C] mb-2">
-                    Année scolaire
+                    Tu es en quelle année ?
                   </Label>
-                  <select
-                    id="year"
-                    value={formData.year}
-                    onChange={(e) => setFormData({ ...formData, year: e.target.value })}
-                    className="mt-2 w-full border border-[#F5F1E8] rounded-xl p-2 bg-white"
+                  <Select 
+                    value={formData.year} 
+                    onValueChange={(value) => setFormData({ ...formData, year: value })}
                   >
-                    {years.map((year) => (
-                      <option key={year} value={year}>
-                        {year}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger className="mt-2 border-[#F5F1E8] rounded-xl">
+                      <SelectValue placeholder="Sélectionne ton niveau..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {years.map((year) => (
+                        <SelectItem key={year} value={year}>
+                          {year}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div>
                   <Label htmlFor="goals" className="text-[#2C2C2C] mb-2">
-                    Objectifs de vie
+                    Quels sont tes objectifs dans la vie ?
                   </Label>
-                  <textarea
+                  <Textarea
                     id="goals"
                     value={formData.lifeGoals}
                     onChange={(e) => setFormData({ ...formData, lifeGoals: e.target.value })}
-                    className="mt-2 w-full border border-[#F5F1E8] rounded-xl p-3 min-h-[120px]"
+                    placeholder="Partage tes rêves et aspirations... (ex: devenir médecin, créer mon entreprise, voyager autour du monde...)"
+                    className="mt-2 border-[#F5F1E8] rounded-xl min-h-[150px]"
                   />
                 </div>
               </div>
@@ -221,7 +222,7 @@ export function Parametres({ onBack, userData, onSave }: ParametresScreenProps) 
               <div className="space-y-6">
                 <div>
                   <Label className="text-[#2C2C2C] mb-3 block">
-                    Matières préférées
+                    Quelles sont tes matières préférées ?
                   </Label>
                   <div className="flex flex-wrap gap-2">
                     {subjects.map((subject) => (
@@ -245,7 +246,7 @@ export function Parametres({ onBack, userData, onSave }: ParametresScreenProps) 
 
                 <div>
                   <Label className="text-[#2C2C2C] mb-3 block">
-                    Matières fortes
+                    Dans quelles matières es-tu fort(e) ?
                   </Label>
                   <div className="flex flex-wrap gap-2">
                     {subjects.map((subject) => (
@@ -269,7 +270,7 @@ export function Parametres({ onBack, userData, onSave }: ParametresScreenProps) 
 
                 <div>
                   <Label className="text-[#2C2C2C] mb-3 block">
-                    Matières à améliorer
+                    Quelles matières aimerais-tu améliorer ?
                   </Label>
                   <div className="flex flex-wrap gap-2">
                     {subjects.map((subject) => (
