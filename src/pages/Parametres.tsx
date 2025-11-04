@@ -41,6 +41,8 @@ export function Parametres({ onBack, userData, onSave }: ParametresScreenProps) 
         'Espagnol',
         'Arts plastiques',
         'Sciences',
+        'CCQ',
+        'Éducation physique',
         'Autre',
       ];
     }
@@ -56,6 +58,8 @@ export function Parametres({ onBack, userData, onSave }: ParametresScreenProps) 
         'Espagnol',
         'Arts plastiques',
         'Sciences',
+        'CCQ',
+        'Éducation physique',
         'Autre',
       ];
     }
@@ -71,6 +75,8 @@ export function Parametres({ onBack, userData, onSave }: ParametresScreenProps) 
         'Physique',
         'Histoire du XXe siècle',
         'Culture et société',
+        'CCQ',
+        'Éducation physique',
         'Autre',
       ];
     }
